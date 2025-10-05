@@ -20,8 +20,8 @@ Fast, privacy‑first password manager. Generate strong passwords, store credent
 ## Quick Start
 1) Clone and install
 ```
-git clone <your-repo-url>
-cd password-manager
+git clone git@github.com:imshubham07/Password-Generator-Secure-Vault-.git
+cd Password-Generator-Secure-Vault-
 npm install
 ```
 
@@ -48,6 +48,15 @@ node dist-backend/server.js
 node node_modules/next/dist/bin/next dev --turbopack
 ```
 Open http://localhost:3000
+
+Or run both with simple scripts (two terminals):
+```
+# Terminal A
+npm run dev:backend
+
+# Terminal B
+npm run dev:frontend
+```
 
 ## End‑to‑End Flow (acceptance)
 1) Sign up or log in
