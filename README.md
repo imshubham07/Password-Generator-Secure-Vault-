@@ -29,8 +29,8 @@ npm install
 ```
 cp .env.example .env.local
 # Edit .env.local and set values:
-# MONGODB_URI=mongodb+srv://user:pass@cluster-host/securevault
-# JWT_SECRET=long-random-string
+# MONGODB_URI=mongodburl
+# JWT_SECRET=example
 # NEXTAUTH_URL=http://localhost:3000
 # PORT=3001
 ```
