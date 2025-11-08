@@ -114,3 +114,37 @@ Option B – Frontend calls external backend URL:
 
 ## License
 MIT
+
+---
+
+## Removing sensitive files already committed
+If you accidentally committed secrets (for example `.env.local`), follow these safe steps.
+
+1) Stop tracking the file (keeps file locally):
+
+```bash
+# untrack .env.local but keep it on disk
+git rm --cached .env.local
+git commit -m "chore: remove .env.local from repository"
+git push origin <branch>
+```
+
+2) Untrack build output if present:
+
+```bash
+git rm -r --cached dist-backend
+git commit -m "chore: remove dist-backend from repository"
+git push origin <branch>
+```
+
+3) If secrets were pushed to remote and need removal from history, use `git filter-repo` (recommended) to remove the file from all commits, then force-push. Example:
+
+```bash
+# install git-filter-repo separately (not included in git by default)
+# remove .env.local from all commits
+git filter-repo --invert-paths --path .env.local
+# force-push rewritten history
+git push --force --all
+```
+
+Warning: rewriting history is destructive. Coordinate with collaborators and rotate any secrets immediately after removing them from history.

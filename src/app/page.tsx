@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/AuthForm';
+import Landing from '@/components/Landing';
 import VaultList from '@/components/VaultList';
 import VaultItemForm from '@/components/VaultItemForm';
 import PasswordGenerator from '@/components/PasswordGenerator';
@@ -14,6 +16,7 @@ type ViewMode = 'vault' | 'add' | 'edit' | 'generator';
 export default function Home() {
   const { isAuthenticated, isLoading, user, logout, masterKey } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>('vault');
+  const searchParams = useSearchParams();
   const [editingItem, setEditingItem] = useState<VaultItem | null>(null);
   const [editingData, setEditingData] = useState<VaultItemData | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,13 +25,36 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
-    // Apply dark mode class to html element
+    // Initialize from localStorage or system preference
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      setIsDarkMode(saved === 'dark');
+    } else {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(prefersDark);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply dark mode class to html element and persist
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
+
+  // If user arrived with ?view=generator, switch to generator after auth
+  useEffect(() => {
+    if (isAuthenticated) {
+      const v = searchParams?.get('view');
+      if (v === 'generator') {
+        setViewMode('generator');
+      }
+    }
+  }, [isAuthenticated, searchParams]);
 
   if (isLoading) {
     return (
@@ -42,17 +68,7 @@ export default function Home() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">🔐 SecureVault</h1>
-            <p className="text-gray-600 dark:text-gray-400">Your privacy-first password manager</p>
-          </div>
-          <AuthForm />
-        </div>
-      </div>
-    );
+    return <Landing />;
   }
 
   const handleAddItem = async (data: { title: string; url: string; vaultData: VaultItemData }) => {

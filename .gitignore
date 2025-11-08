@@ -19,7 +19,7 @@
 
 # production
 /build
-/dist-backend
+./dist-backend
 
 # misc
 .DS_Store
@@ -36,6 +36,11 @@ yarn-error.log*
 .env.*
 backend/.env
 backend/.env.*
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+/dist-backend
 
 # vercel
 .vercel

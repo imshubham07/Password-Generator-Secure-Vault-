@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface AuthFormProps {
   className?: string;
@@ -16,6 +17,7 @@ export default function AuthForm({ className = '' }: AuthFormProps) {
   const [error, setError] = useState('');
 
   const { login, register } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +47,12 @@ export default function AuthForm({ className = '' }: AuthFormProps) {
     try {
       if (isLogin) {
         await login(email, password);
+        // redirect to generator view after successful login
+        router.push('/?view=generator');
       } else {
         await register(email, password);
+        // redirect to generator view after successful registration
+        router.push('/?view=generator');
       }
     } catch (error: any) {
       setError(error.message || 'Authentication failed');
