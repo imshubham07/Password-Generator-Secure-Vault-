@@ -1,7 +1,10 @@
+// API URL configuration:
+// - Development: Uses local backend at http://localhost:3001/api
+// - Production: Uses NEXT_PUBLIC_API_URL env var, or falls back to your backend URL
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? '/api' 
-    : 'https://password-generator-secure-vault.onrender.com/api');
+    ? 'https://password-generator-secure-vault.onrender.com/api'  // ← REPLACE THIS with your actual backend URL!
+    : 'http://localhost:3001/api');
 
 export interface User {
   id: string;
