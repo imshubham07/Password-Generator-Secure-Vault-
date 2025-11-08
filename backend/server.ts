@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+  origin: process.env.NEXTAUTH_URL || 'http://localhost:3000' || 'https://shubhamdev.tech',
   credentials: true
 }));
 app.use(express.json());
