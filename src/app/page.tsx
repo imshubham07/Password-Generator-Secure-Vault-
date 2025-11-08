@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import AuthForm from '@/components/AuthForm';
 import Landing from '@/components/Landing';
 import VaultList from '@/components/VaultList';
 import VaultItemForm from '@/components/VaultItemForm';
@@ -16,7 +14,8 @@ type ViewMode = 'vault' | 'add' | 'edit' | 'generator';
 export default function Home() {
   const { isAuthenticated, isLoading, user, logout, masterKey } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>('vault');
-  const searchParams = useSearchParams();
+  // We avoid next/navigation's useSearchParams to prevent prerender-time errors
+  // and instead read search params from window.location inside a client-only effect.
   const [editingItem, setEditingItem] = useState<VaultItem | null>(null);
   const [editingData, setEditingData] = useState<VaultItemData | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,12 +48,17 @@ export default function Home() {
   // If user arrived with ?view=generator, switch to generator after auth
   useEffect(() => {
     if (isAuthenticated) {
-      const v = searchParams?.get('view');
-      if (v === 'generator') {
-        setViewMode('generator');
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const v = params.get('view');
+        if (v === 'generator') {
+          setViewMode('generator');
+        }
+      } catch {
+        // ignore in non-browser environments
       }
     }
-  }, [isAuthenticated, searchParams]);
+  }, [isAuthenticated]);
 
   if (isLoading) {
     return (
@@ -87,8 +91,9 @@ export default function Home() {
       });
       setViewMode('vault');
       setRefreshTrigger(prev => prev + 1);
-    } catch (error: any) {
-      alert('Failed to add item: ' + error.message);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      alert('Failed to add item: ' + msg);
     } finally {
       setIsFormLoading(false);
     }
@@ -112,8 +117,9 @@ export default function Home() {
       setEditingItem(null);
       setEditingData(null);
       setRefreshTrigger(prev => prev + 1);
-    } catch (error: any) {
-      alert('Failed to update item: ' + error.message);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      alert('Failed to update item: ' + msg);
     } finally {
       setIsFormLoading(false);
     }

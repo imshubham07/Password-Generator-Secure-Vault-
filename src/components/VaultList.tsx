@@ -45,8 +45,9 @@ export default function VaultList({
       setError('');
       const response = await vaultApi.getAll();
       setVaultItems(response.vaultItems);
-    } catch (error: any) {
-      setError(error.message || 'Failed to load vault items');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      setError(msg || 'Failed to load vault items');
     } finally {
       setIsLoading(false);
     }
@@ -58,8 +59,9 @@ export default function VaultList({
       setError('');
       const response = await vaultApi.getAll(query);
       setVaultItems(response.vaultItems);
-    } catch (error: any) {
-      setError(error.message || 'Search failed');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      setError(msg || 'Search failed');
     } finally {
       setIsLoading(false);
     }
@@ -73,8 +75,9 @@ export default function VaultList({
     try {
       await vaultApi.delete(id);
       setVaultItems(items => items.filter(item => item._id !== id));
-    } catch (error: any) {
-      alert('Failed to delete item: ' + error.message);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      alert('Failed to delete item: ' + msg);
     }
   };
 
@@ -98,7 +101,7 @@ export default function VaultList({
           setCopyStates(prev => ({ ...prev, [item._id]: false }));
         }, 2000);
       }
-    } catch (error) {
+    } catch {
       alert('Failed to copy password');
     }
   };
@@ -123,7 +126,7 @@ export default function VaultList({
           setCopyStates(prev => ({ ...prev, [`${item._id}_username`]: false }));
         }, 2000);
       }
-    } catch (error) {
+    } catch {
       alert('Failed to copy username');
     }
   };

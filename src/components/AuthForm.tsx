@@ -54,8 +54,9 @@ export default function AuthForm({ className = '' }: AuthFormProps) {
         // redirect to generator view after successful registration
         router.push('/?view=generator');
       }
-    } catch (error: any) {
-      setError(error.message || 'Authentication failed');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      setError(msg || 'Authentication failed');
     } finally {
       setIsLoading(false);
     }
